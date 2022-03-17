@@ -287,11 +287,27 @@ class _LoginScreen extends State<LoginScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text("  " + s),
-                                Container(
-                                  margin: EdgeInsets.only(top: 2, right: 4),
-                                  child: Icon(
-                                    Icons.close,
-                                    size: 14,
+                                InkWell(
+                                  onTap: () {
+                                    FirebaseFirestore.instance
+                                        .collection('anand')
+                                        .doc('0Nx01x3HgeswCn6KSNa9')
+                                        .update({
+                                      s: FieldValue.delete(),
+                                    });
+                                    // Navigator.pop(context);
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) =>
+                                    //             LoginScreen()));
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.only(top: 2, right: 4),
+                                    child: Icon(
+                                      Icons.close,
+                                      size: 14,
+                                    ),
                                   ),
                                 ),
                               ],
