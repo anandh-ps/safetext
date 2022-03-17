@@ -23,6 +23,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreen extends State<LoginScreen> {
   var allData;
   String title = "";
+  bool flag = true;
+  TextEditingController saveController = TextEditingController();
 
   @override
   void initState() {
@@ -30,7 +32,6 @@ class _LoginScreen extends State<LoginScreen> {
     super.initState();
   }
 
-  String value = "";
   int selectedId = 0;
 
   void main() async {
@@ -63,64 +64,11 @@ class _LoginScreen extends State<LoginScreen> {
     }
     Utils util = new Utils();
     TextEditingController titleController = TextEditingController();
-    TextEditingController saveController = TextEditingController(text: value);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
           backgroundColor: Color(0xFFebf0fa),
           key: _scaffoldKey,
-          /* endDrawer: Drawer(
-            child: Container(
-              color: Colors.blue,
-              child: ListView(
-                children: [
-                  DrawerHeader(
-                    child: Image.asset("assets/images/logo.png"),
-                  ),
-                  DrawerListTile(
-                    title: "Dashboard",
-                    svgSrc: "assets/icons/menu_dashbord.svg",
-                    press: () {},
-                  ),
-                  DrawerListTile(
-                    title: "Transaction",
-                    svgSrc: "assets/icons/menu_tran.svg",
-                    press: () {},
-                  ),
-                  DrawerListTile(
-                    title: "Task",
-                    svgSrc: "assets/icons/menu_task.svg",
-                    press: () {},
-                  ),
-                  DrawerListTile(
-                    title: "Documents",
-                    svgSrc: "assets/icons/menu_doc.svg",
-                    press: () {},
-                  ),
-                  DrawerListTile(
-                    title: "Store",
-                    svgSrc: "assets/icons/menu_store.svg",
-                    press: () {},
-                  ),
-                  DrawerListTile(
-                    title: "Notification",
-                    svgSrc: "assets/icons/menu_notification.svg",
-                    press: () {},
-                  ),
-                  DrawerListTile(
-                    title: "Profile",
-                    svgSrc: "assets/icons/menu_profile.svg",
-                    press: () {},
-                  ),
-                  DrawerListTile(
-                    title: "Settings",
-                    svgSrc: "assets/icons/menu_setting.svg",
-                    press: () {},
-                  ),
-                ],
-              ),
-            ),
-          ),*/
           appBar: AppBar(
             automaticallyImplyLeading:
                 false, // this will hide Drawer hamburger icon
@@ -293,6 +241,11 @@ class _LoginScreen extends State<LoginScreen> {
                     children: List.generate(allData.length, (index) {
                       Map<String, dynamic> allDatas = allData;
                       String s = allDatas.keys.elementAt(index);
+                      if (flag == true) {
+                        saveController.text =
+                            json.encode(allDatas[s].toString());
+                        flag = false;
+                      }
 
                       List<Color> colors;
                       if (selectedId != index) {
@@ -326,7 +279,8 @@ class _LoginScreen extends State<LoginScreen> {
                                 // print("======== " + s);
                                 // util.prints(allDatas[s]);
                                 selectedId = index;
-                                value = json.encode(allDatas[s].toString());
+                                saveController.text =
+                                    json.encode(allDatas[s].toString());
                               });
                             },
                             child: Row(
