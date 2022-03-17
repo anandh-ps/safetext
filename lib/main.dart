@@ -22,6 +22,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreen extends State<LoginScreen> {
   var allData;
+  String title = "";
 
   @override
   void initState() {
@@ -61,6 +62,8 @@ class _LoginScreen extends State<LoginScreen> {
       margin = 100;
     }
     Utils util = new Utils();
+    TextEditingController titleController = TextEditingController();
+    TextEditingController saveController = TextEditingController(text: value);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
@@ -168,7 +171,19 @@ class _LoginScreen extends State<LoginScreen> {
               ),
               InkWell(
                 onTap: () {
-                  print("download");
+                  Utils util = new Utils();
+                  util.onLoading(context);
+                  int index = 0;
+                  FirebaseFirestore.instance
+                      .collection('anand')
+                      .doc('0Nx01x3HgeswCn6KSNa9')
+                      .update({
+                    title: saveController.text,
+                  });
+                  print("==" + title);
+                  print(saveController.text);
+
+                  Navigator.pop(context);
                 },
                 child: Container(
                   margin: EdgeInsets.all(12),
@@ -202,17 +217,7 @@ class _LoginScreen extends State<LoginScreen> {
               ),
               InkWell(
                 onTap: () {
-                  FirebaseFirestore.instance
-                      .collection('anand')
-                      .doc('0Nx01x3HgeswCn6KSNa9')
-                      .update({
-                    'cart': "asdfasdfasdff",
-                  });
-                  util.onLoading(context);
-                  Map<String, dynamic> newData = new Map();
-                  allData.addAll({'email1df': 'test@gmail.com'});
-                  setState(() {});
-                  Navigator.pop(context);
+                  dialogbox();
                 },
                 child: Container(
                   margin: EdgeInsets.all(12),
@@ -288,6 +293,7 @@ class _LoginScreen extends State<LoginScreen> {
                     children: List.generate(allData.length, (index) {
                       Map<String, dynamic> allDatas = allData;
                       String s = allDatas.keys.elementAt(index);
+
                       List<Color> colors;
                       if (selectedId != index) {
                         colors = [Color(0xFF9796f0), const Color(0xFFfbc7d4)];
@@ -316,7 +322,9 @@ class _LoginScreen extends State<LoginScreen> {
                           child: InkWell(
                             onTap: () {
                               setState(() {
-                                util.prints(allDatas[s]);
+                                title = s;
+                                // print("======== " + s);
+                                // util.prints(allDatas[s]);
                                 selectedId = index;
                                 value = json.encode(allDatas[s].toString());
                               });
@@ -344,7 +352,7 @@ class _LoginScreen extends State<LoginScreen> {
                   constraints: BoxConstraints(maxHeight: 500),
                   child: SingleChildScrollView(
                     child: TextFormField(
-                      controller: TextEditingController(text: value),
+                      controller: saveController,
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.all(10.0),
                         hintText: "Your text goes here...",
@@ -371,6 +379,51 @@ class _LoginScreen extends State<LoginScreen> {
             ),
           ),
         ));
+  }
+
+  dialogbox() {
+    TextEditingController controller = TextEditingController();
+    return showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Add File Name'),
+        content: new Text('Please Enter the file name'),
+        actions: <Widget>[
+          TextFormField(
+            controller: controller,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Utils util = new Utils();
+                  util.onLoading(context);
+
+                  FirebaseFirestore.instance
+                      .collection('anand')
+                      .doc('0Nx01x3HgeswCn6KSNa9')
+                      .update({
+                    controller.text: "",
+                  });
+                  String empty = "";
+                  Map<String, dynamic> newData = new Map();
+                  allData.addAll({controller.text: empty});
+                  setState(() {});
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                child: new Text('Add'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: new Text('Cancel'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> getTokenId() async {
