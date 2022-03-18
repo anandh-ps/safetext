@@ -3,8 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:safetext/utils/utils.dart';
-import 'package:safetext/components/components/side_menu.dart';
+
 import 'dart:convert';
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: DashBoardScreen(),
+    ),
+  );
+}
 
 class DashBoardScreen extends StatefulWidget {
   @override
@@ -280,12 +288,61 @@ class _DashBoardScreen extends State<DashBoardScreen> {
                                 Text("  " + s),
                                 InkWell(
                                   onTap: () {
-                                    FirebaseFirestore.instance
-                                        .collection('anand')
-                                        .doc('0Nx01x3HgeswCn6KSNa9')
-                                        .update({
-                                      s: FieldValue.delete(),
-                                    });
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        // return object of type Dialog
+                                        return AlertDialog(
+                                          title: new Text("Confirm"),
+                                          content: new Text(
+                                              "Are you sure, Want to Delete ?"),
+                                          actions: <Widget>[
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                new FlatButton(
+                                                  child: new Text(
+                                                    "Yes",
+                                                    style: TextStyle(
+                                                        color: Colors.blue),
+                                                  ),
+                                                  onPressed: () {
+                                                    util.onLoading(context);
+                                                    saveController.text =
+                                                        allData[s];
+                                                    allData.removeWhere(
+                                                        (key, value) =>
+                                                            key == s);
+                                                    setState(() {});
+
+                                                    FirebaseFirestore.instance
+                                                        .collection('anand')
+                                                        .doc(
+                                                            '0Nx01x3HgeswCn6KSNa9')
+                                                        .update({
+                                                      s: FieldValue.delete(),
+                                                    });
+                                                    Navigator.pop(context);
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                                new FlatButton(
+                                                  child: new Text(
+                                                    "No",
+                                                    style: TextStyle(
+                                                        color: Colors.blue),
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
                                   },
                                   child: Container(
                                     margin: EdgeInsets.only(top: 2, right: 4),
@@ -311,16 +368,16 @@ class _DashBoardScreen extends State<DashBoardScreen> {
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.all(10.0),
                         hintText: "Your text goes here...",
-                        hintStyle: TextStyle(color: Colors.grey),
+                        hintStyle: TextStyle(color: Colors.black12),
                         filled: true,
                         fillColor: Colors.white,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(2.0)),
-                          borderSide: BorderSide(color: Colors.grey, width: 1),
+                          borderSide: BorderSide(color: Colors.green, width: 1),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                          borderSide: BorderSide(color: Colors.grey),
+                          borderSide: BorderSide(color: Colors.green),
                         ),
                       ),
                       minLines: 50,
