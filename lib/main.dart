@@ -14,7 +14,6 @@ void main() {
         // When navigating to the "/" route, build the FirstScreen widget.
         '/login': (context) => const LoginScreen(),
         // When navigating to the "/second" route, build the SecondScreen widget.
-        '/second': (context) => DashBoardScreen(),
       },
     ),
   );
@@ -85,11 +84,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         print(kjnk[kjnk.id]);
                         if (kjnk[kjnk.id] == passwordController.text) {
                           util.showToast("Success");
-                          Navigator.pushNamed(context, "/second");
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => DashBoardScreen()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DashBoardScreen(
+                                      collectionController:
+                                          usernameController)));
                         } else {
                           util.showToast("Please Enter the correct Password");
                           Navigator.pop(context);
@@ -109,9 +109,34 @@ class _LoginScreenState extends State<LoginScreen> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         TextButton(
-                                          onPressed: () {
+                                          onPressed: () async {
                                             Utils util = new Utils();
                                             util.onLoading(context);
+                                            FirebaseFirestore.instance
+                                                .collection(
+                                                    usernameController.text)
+                                                .doc("Content")
+                                                .set({
+                                              "Sample":
+                                                  "Save Your Data before moving another Tab!",
+                                            });
+                                            FirebaseFirestore.instance
+                                                .collection(
+                                                    usernameController.text)
+                                                .doc("password")
+                                                .set({
+                                              "password":
+                                                  passwordController.text
+                                            });
+
+                                            Navigator.pop(context);
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        DashBoardScreen(
+                                                            collectionController:
+                                                                usernameController)));
                                           },
                                           child: new Text('Yes'),
                                         ),

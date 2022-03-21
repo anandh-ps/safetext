@@ -6,15 +6,13 @@ import 'package:safetext/utils/utils.dart';
 
 import 'dart:convert';
 
-void main() {
-  runApp(
-    MaterialApp(
-      home: DashBoardScreen(),
-    ),
-  );
-}
+import '../main.dart';
 
 class DashBoardScreen extends StatefulWidget {
+  DashBoardScreen({Key? key, required this.collectionController})
+      : super(key: key);
+
+  final TextEditingController collectionController;
   @override
   _DashBoardScreen createState() => _DashBoardScreen();
 }
@@ -122,8 +120,8 @@ class _DashBoardScreen extends State<DashBoardScreen> {
                   util.onLoading(context);
                   int index = 0;
                   FirebaseFirestore.instance
-                      .collection('anand')
-                      .doc('0Nx01x3HgeswCn6KSNa9')
+                      .collection(widget.collectionController.text)
+                      .doc("Content")
                       .update({
                     title: saveController.text,
                   });
@@ -206,7 +204,47 @@ class _DashBoardScreen extends State<DashBoardScreen> {
                     padding: EdgeInsets.all(0),
                     icon: Icon(Icons.exit_to_app),
                     onPressed: () {
-                      Navigator.pop(context);
+                      debugPrint("Check");
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            // return object of type Dialog
+                            return AlertDialog(
+                              title: new Text("Confirm"),
+                              content:
+                                  new Text("Are you sure, Want to Logout ?"),
+                              actions: <Widget>[
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    new FlatButton(
+                                      child: new Text(
+                                        "Yes",
+                                        style: TextStyle(color: Colors.blue),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    LoginScreen()));
+                                      },
+                                    ),
+                                    new FlatButton(
+                                      child: new Text(
+                                        "No",
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          });
                     },
                   ),
                 ),
@@ -275,8 +313,8 @@ class _DashBoardScreen extends State<DashBoardScreen> {
                             onTap: () {
                               setState(() {
                                 title = s;
-                                // print("======== " + s);
-                                // util.prints(allDatas[s]);
+                                print("======== " + s);
+                                util.prints(allDatas[s]);
                                 selectedId = index;
                                 saveController.text =
                                     json.encode(allDatas[s].toString());
@@ -317,9 +355,10 @@ class _DashBoardScreen extends State<DashBoardScreen> {
                                                     setState(() {});
 
                                                     FirebaseFirestore.instance
-                                                        .collection('anand')
-                                                        .doc(
-                                                            '0Nx01x3HgeswCn6KSNa9')
+                                                        .collection(widget
+                                                            .collectionController
+                                                            .text)
+                                                        .doc("Content")
                                                         .update({
                                                       s: FieldValue.delete(),
                                                     });
@@ -413,14 +452,14 @@ class _DashBoardScreen extends State<DashBoardScreen> {
                   util.onLoading(context);
 
                   FirebaseFirestore.instance
-                      .collection('anand')
-                      .doc('0Nx01x3HgeswCn6KSNa9')
+                      .collection(widget.collectionController.text)
+                      .doc("Content")
                       .update({
-                    controller.text: "",
+                    controller.text: "".toString(),
                   });
                   String empty = "";
                   Map<String, dynamic> newData = new Map();
-                  allData.addAll({controller.text: empty});
+                  allData.addAll({controller.text: empty.toString()});
                   setState(() {});
                   Navigator.pop(context);
                   Navigator.pop(context);
@@ -441,7 +480,8 @@ class _DashBoardScreen extends State<DashBoardScreen> {
   Future<void> getTokenId() async {
     var firestore = FirebaseFirestore.instance;
 
-    QuerySnapshot querySnapshot = await firestore.collection("anand").get();
+    QuerySnapshot querySnapshot =
+        await firestore.collection(widget.collectionController.text).get();
     for (var snapshot in querySnapshot.docs) {
       var documentID = snapshot.id; // <-- Document ID
       print(documentID);
