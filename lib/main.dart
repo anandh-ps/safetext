@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:safetext/components/dashboardScreen.dart';
 import 'package:safetext/utils/responsive.dart';
@@ -6,6 +7,7 @@ import 'package:safetext/utils/utils.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp();
   runApp(
     MaterialApp(
       home: LoginScreen(),
@@ -88,8 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => DashBoardScreen(
-                                      collectionController:
-                                          usernameController)));
+                                      usernameController.text)));
                         } else {
                           util.showToast("Please Enter the correct Password");
                           Navigator.pop(context);
@@ -135,8 +136,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         DashBoardScreen(
-                                                            collectionController:
-                                                                usernameController)));
+                                                            usernameController
+                                                                .text)));
                                           },
                                           child: new Text('Yes'),
                                         ),
@@ -209,7 +210,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         print(kjnk[kjnk.id]);
                         if (kjnk[kjnk.id] == passwordController.text) {
                           util.showToast("Success");
-                          Navigator.pushNamed(context, "/second");
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DashBoardScreen(
+                                      usernameController.text)));
                         } else {
                           util.showToast("Please Enter the correct Password");
                           Navigator.pop(context);
@@ -229,9 +234,34 @@ class _LoginScreenState extends State<LoginScreen> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         TextButton(
-                                          onPressed: () {
+                                          onPressed: () async {
                                             Utils util = new Utils();
                                             util.onLoading(context);
+                                            FirebaseFirestore.instance
+                                                .collection(
+                                                    usernameController.text)
+                                                .doc("Content")
+                                                .set({
+                                              "Sample":
+                                                  "Save Your Data before moving another Tab!",
+                                            });
+                                            FirebaseFirestore.instance
+                                                .collection(
+                                                    usernameController.text)
+                                                .doc("password")
+                                                .set({
+                                              "password":
+                                                  passwordController.text
+                                            });
+
+                                            Navigator.pop(context);
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        DashBoardScreen(
+                                                            usernameController
+                                                                .text)));
                                           },
                                           child: new Text('Yes'),
                                         ),
@@ -301,7 +331,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       print(kjnk[kjnk.id]);
                       if (kjnk[kjnk.id] == passwordController.text) {
                         util.showToast("Success");
-                        Navigator.pushNamed(context, "/second");
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    DashBoardScreen(usernameController.text)));
                       } else {
                         util.showToast("Please Enter the correct Password");
                         Navigator.pop(context);
@@ -321,9 +355,33 @@ class _LoginScreenState extends State<LoginScreen> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       TextButton(
-                                        onPressed: () {
+                                        onPressed: () async {
                                           Utils util = new Utils();
                                           util.onLoading(context);
+                                          FirebaseFirestore.instance
+                                              .collection(
+                                                  usernameController.text)
+                                              .doc("Content")
+                                              .set({
+                                            "Sample":
+                                                "Save Your Data before moving another Tab!",
+                                          });
+                                          FirebaseFirestore.instance
+                                              .collection(
+                                                  usernameController.text)
+                                              .doc("password")
+                                              .set({
+                                            "password": passwordController.text
+                                          });
+
+                                          Navigator.pop(context);
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DashBoardScreen(
+                                                          usernameController
+                                                              .text)));
                                         },
                                         child: new Text('Yes'),
                                       ),
@@ -376,7 +434,6 @@ class _LoginScreenState extends State<LoginScreen> {
             controller: controller,
             obscureText: obsecuretext,
             autocorrect: true,
-            keyboardType: TextInputType.number,
             decoration: InputDecoration(
               hintText: usernamepass,
               hintStyle: TextStyle(color: Colors.grey),
